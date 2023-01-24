@@ -8,6 +8,15 @@ import { UsersModule } from './users/users.module';
 import { WorkspacesModule } from './workspaces/workspaces.module';
 import { ChannelsModule } from './channels/channels.module';
 import { DmsModule } from './dms/dms.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ChannelChats } from './entities/ChannelChats';
+import { ChannelMembers } from './entities/ChannelMembers';
+import { Channels } from './entities/Channels';
+import { DMs } from './entities/DMs';
+import { Mentions } from './entities/Mentions';
+import { Users } from './entities/Users';
+import { WorkspaceMembers } from './entities/WorkspaceMembers';
+import { Workspaces } from './entities/Workspaces';
 
 // const getEnv = () => {
 //   return {
@@ -20,7 +29,31 @@ import { DmsModule } from './dms/dms.module';
 // 이런식으로사용할수도있음
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: '127.0.0.1',
+      port: 3306,
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_DATABASE,
+      entities: [
+        ChannelChats,
+        ChannelMembers,
+        Channels,
+        DMs,
+        Mentions,
+        Users,
+        WorkspaceMembers,
+        Workspaces,
+      ],
+      // autoLoadEntities: true,
+      synchronize: false, //개발환경일떄만 한번하고나면 false로고쳐야함
+      logging: true,
+      keepConnectionAlive: true,
+      charset: 'utf8mb4_general_ci',
+      migrations: [__dirname + '/src/migrations/*.ts'],
+    }),
     UsersModule,
     WorkspacesModule,
     ChannelsModule,
