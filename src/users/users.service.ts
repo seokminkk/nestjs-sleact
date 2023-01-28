@@ -1,5 +1,10 @@
 import { Users } from './../entities/Users';
-import { HttpException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -26,13 +31,13 @@ export class UsersService {
 
     if (!password) {
       //비번없다고에러
-      throw new HttpException('비번없다고에러', 400);
+      throw new BadRequestException('비번없다고에러');
     }
-
+    // BadRequestException,UnauthorizedException 을 사용하면 뒤에 상태코드 안붙여도됨
     const user = await this.usersRepository.findOne({ where: { email } });
     if (user) {
       //이미존재하는유저라고 에러
-      return;
+      throw new UnauthorizedException('이미 존재하는 유저입니다.');
     }
     const hashedPassword = await bcrypt.hash(password, 12);
     await this.usersRepository.save({
