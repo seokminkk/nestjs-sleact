@@ -1,3 +1,6 @@
+import { NotLoggedInGuard } from './../auth/not-logged-in.guard';
+import { LoggedInGuard } from './../auth/logged-in.guard';
+import { LocalAuthGuard } from './../auth/local-auth.guard';
 import { UndefinedToNullInterceptor } from './../common/interceptors/undefinedToNull.interceptor';
 import { User } from './../common/decorators/user.decorator';
 import { UserDto } from './../common/dto/user.dto';
@@ -9,6 +12,7 @@ import {
   Post,
   Req,
   Res,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -27,9 +31,10 @@ export class UsersController {
   @ApiOperation({ summary: '내정보조회' })
   @Get()
   getUsers(@User() user) {
-    return user;
+    return user || false;
   }
-
+  //
+  @UseGuards(new NotLoggedInGuard())
   @ApiOperation({ summary: '회원가입' })
   @Post()
   async postUsers(@Body() data: JoinRequestDto) {
@@ -41,11 +46,13 @@ export class UsersController {
     type: UserDto,
   })
   @ApiOperation({ summary: '로그인' })
+  @UseGuards(LocalAuthGuard) //권한있는지 확인할수잇다로그인여부 인터셉터보다 먼저실행됨
   @Post('login')
   logIn(@User() user) {
     return user;
   }
 
+  @UseGuards(new LoggedInGuard())
   @ApiOperation({ summary: '로그아웃' })
   @Post('logout')
   logOut(@Req() req, @Res() res) {

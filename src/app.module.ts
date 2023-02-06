@@ -1,3 +1,4 @@
+import { AuthModule } from './auth/auth.module';
 import { UsersService } from './users/users.service';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
@@ -55,6 +56,7 @@ import { Workspaces } from './entities/Workspaces';
       migrations: [__dirname + '/src/migrations/*.ts'],
     }),
     UsersModule,
+    AuthModule,
     WorkspacesModule,
     ChannelsModule,
     DmsModule,

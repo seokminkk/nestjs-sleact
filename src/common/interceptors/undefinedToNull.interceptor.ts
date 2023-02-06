@@ -12,7 +12,7 @@ export class UndefinedToNullInterceptor implements NestInterceptor {
     context: ExecutionContext,
     next: CallHandler<any>,
   ): Observable<any> | Promise<Observable<any>> {
-    // 전 부분
+    // 전 부분 컨트롤러 가기전부분
 
     //후부분 return 뒤에
     return next
